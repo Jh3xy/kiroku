@@ -1,0 +1,80 @@
+
+// ====================  KIROKU — API DATA MODULE (Graph QL)  ====================
+// AniList GraphQL API client. No UI logic here — just fetch + shape.
+// Docs: https://docs.anilist.co/guide/introduction
+
+import { SEARCH_QUERY, BROWSE_QUERY } from "./utils.js";
+
+const ANILIST_ENDPOINT = 'https://graphql.anilist.co';
+
+
+/**
+ * Shared request helper — both queries hit the same endpoint with the
+ * same error handling, no reason to duplicate that logic.
+ */
+async function anilistRequest(query, variables, signal) {
+  const res = await fetch(ANILIST_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ query, variables }),
+    signal,
+  });
+
+  // Check both for GraphQL-level errors, and HTTP status codes for transport-level failures
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(
+      `AniList request failed: ${res.status} ${res.statusText} — ${body}`,
+    );
+  }
+
+  const json = await res.json();
+
+  if (json.errors) {
+    throw new Error(
+      `AniList GraphQL error: ${json.errors.map((e) => e.message).join("; ")}`,
+    );
+  }
+
+  console.log("AniList request successful:", json.data.Page);
+  return json.data.Page;
+
+}
+
+
+/**
+ * Search AniList for anime by title.
+ * @param {string} search - title/keywords to search
+ * @param {number} page - 1-indexed page number
+ * @param {number} perPage - results per page (AniList caps this at 50)
+ * @returns {Promise<object>} raw AniList response.data.Page
+ */
+export async function searchAnime(search, page = 1, perPage = 10, signal) {
+  return anilistRequest(SEARCH_QUERY, { search, page, perPage }, signal);
+}
+
+/**
+ * Get currently trending anime — use this for the landing/browse grid
+ * so it's populated on page load, before any search happens.
+ * @param {number} page - 1-indexed page number
+ * @param {number} perPage - results per page (AniList caps this at 50)
+ * @returns {Promise<object>} raw AniList response.data.Page
+ */
+export async function getTrendingAnime(page = 1, perPage = 10) {
+  return anilistRequest(BROWSE_QUERY, { page, perPage });
+}
+
+
+
+/**
+ * Expose to window so you can call these directly for testings
+ * window.searchAnime('frieren').then(console.log)
+ * window.getTrendingAnime().then(console.log)
+ */
+window.searchAnime = searchAnime;
+window.getTrendingAnime = getTrendingAnime;
+
+

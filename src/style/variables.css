@@ -1,0 +1,150 @@
+
+
+/* ====================  KIROKU  =================== */
+
+:root{
+
+  /* ---------- TYPOGRAPHY  ---------- */
+  --ff-primary: 'Bebas Neue', sans-serif;
+  --ff-secondary: 'Manrope', sans-serif;
+
+  /* ---------- TYPOGRAPHY  ---------- */
+  --fs-2xs: 9px;  
+  --fs-xs:  10px; 
+  --fs-sm:  11.5px; 
+  --fs-base:13px; 
+  --fs-md:  14px; 
+  --fs-lg:  16px;  
+  --fs-xl:  20px; 
+  --fs-2xl: 28px; 
+  --fs-display-sm: clamp(24px, 3.6vw, 32px);
+  --fs-display-md: clamp(28px, 4vw, 40px);
+  --fs-display-lg: clamp(32px, 4.6vw, 50px);
+
+  /* ---------- TYPOGRAPHY  ---------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    800;
+
+  /* ---------- TYPOGRAPHY  ---------- */
+  --lh-tight:   1.05; 
+  --lh-snug:    1.25; 
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65; 
+
+  /* ---------- TYPOGRAPHY  ---------- */
+  --spacing-tight:   -0.01em;
+  --spacing-normal:  0em;
+  --spacing-wide:    0.02em;  /* button/label text */
+  --spacing-wider:   0.08em;  /* brand wordmark */
+  --spacing-eyebrow: 0.2em;   /* "TRENDING #1" style eyebrows */
+  --spacing-widest:  0.14em;  /* small caps sub-labels */
+
+  /* ---------- SPACING SCALE (4px base grid) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+
+  /* ---------- RADIUS SCALE ---------- */
+  --radius-sm:   6px;   /* small chips, inputs on tight layouts */
+  --radius-md:   9px;   /* poster cards */
+  --radius-lg:   14px;  /* hero art tile, large panels */
+  --radius-full: 100px; /* pills, badges, nav links, buttons, avatars */
+
+  /* ---------- COMPONENT SIZE TOKENS ---------- */
+  --size-brand-mark:   32px;  /* logo dot */
+  --size-score-badge:  52px;  /* circular score/rating badge */
+  --size-fav-icon-btn: 24px;  /* card favorite toggle */
+  --size-nav-icon:     13px;  /* search icon, close icon */
+  --aspect-poster:     2 / 3; /* card/poster aspect ratio */
+
+  /* ---------- BORDERS ---------- */
+  --border-width-sm: 1px;
+  --border-width-md: 2px; /* focus rings */
+
+  /* ---------- TRANSITIONS ---------- */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 350ms ease;
+  --transition-card: 250ms ease; /* hover lift/scale */
+
+  /* ---------- Z-INDEX SCALE ---------- */
+  --z-base:     1;
+  --z-card-fx:  2;  /* overlays/badges within a card */
+  --z-nav:      50;
+  --z-tool-ui:  60;
+  --z-scanline: 999;
+
+  /* ---------- BREAKPOINTS (reference only — inline in media queries) ----------
+     --bp-nav-wrap: 640px   → nav links wrap, search goes full-width
+     --bp-hero-stack: 760px → hero grid collapses to single column
+  ------------------------------------------------------------------------------- */
+}
+
+:root,
+:root[data-theme="dark"]{
+
+  /* ---------- COLOR — surfaces ---------- */
+  --color-bg:            #0f1011;
+  --color-surface:       #1a1b1d;
+  --color-surface-hover: #242628;
+  --color-border:        #3a3d40;
+
+  /* ---------- COLOR — accents ---------- */
+  --color-copper:     #B87533;  /* structural: borders, tag fill, secondary icons */
+  --color-persimmon:  #FF6B3D;  /* primary action: CTA, active state, hover glow — brightened vs base for dark-bg legibility */
+  --color-gold:       #D4AF37;  /* reserved: score badges, favorite star only */
+
+  /* ---------- COLOR — text ---------- */
+  --color-text-strong: #FFF6E6;  /* headings, high emphasis */
+  --color-text-body:   #e7ddc4;  /* default body copy */
+  --color-text-dim:    #8f8672;  /* meta text, timestamps, secondary labels */
+  --color-text-muted:  #5f6266;  /* placeholders, disabled, faint icons */
+
+  /* ---------- COMPOUND / effect tokens (theme-conditional) ---------- */
+  --hero-glow: radial-gradient(circle, rgba(255,107,61,0.5), rgba(212,175,55,0.14) 55%, transparent 72%);
+  --overlay-grad: linear-gradient(0deg, rgba(15,16,17,0.98) 14%, rgba(15,16,17,0.6) 60%, transparent 100%);
+  --nav-bg: rgba(15,16,17,0.92);
+  --shadow-card-idle:  0 0 0 1px var(--color-border);
+  --shadow-card-hover: 0 0 0 1px var(--color-persimmon), 0 0 22px rgba(255,107,61,0.5);
+  --scanline-opacity: 0.03; /* Late Night Rerun signature texture; set to 0 to disable per-theme */
+}
+
+:root[data-theme="light"]{
+
+  /* ---------- COLOR — surfaces ---------- */
+  --color-bg:            #FFF6E6;
+  --color-surface:       #FFFDF8;
+  --color-surface-hover: #F2E6C9;
+  --color-border:        #E4D4B0;
+
+  /* ---------- COLOR — accents ---------- */
+  --color-copper:     #B87533;
+  --color-persimmon:  #E25A2A;  /* base (non-brightened) persimmon */
+  --color-gold:       #D4AF37; 
+
+  /* ---------- COLOR — text ---------- */
+  --color-text-strong: #1D1F21;
+  --color-text-body:   #3c3e41;
+  --color-text-dim:    #7a7d81;
+  --color-text-muted:  #9b8f70;
+
+  /* ---------- COMPOUND / effect tokens (theme-conditional) ---------- */
+  --hero-glow: radial-gradient(circle, rgba(226,90,42,0.16), rgba(212,175,55,0.05) 55%, transparent 72%);
+  --overlay-grad: linear-gradient(0deg, rgba(255,246,230,0.97) 12%, rgba(255,246,230,0.55) 60%, transparent 100%);
+  --nav-bg: rgba(255,246,230,0.9);
+  --shadow-card-idle:  0 0 0 1px var(--color-border);
+  --shadow-card-hover: 0 14px 28px -14px rgba(29,31,33,0.28), 0 0 0 1px var(--color-persimmon);
+  --scanline-opacity: 0; /* texture is a dark-mode-only signature; off in light */
+}

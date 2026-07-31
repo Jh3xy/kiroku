@@ -1,0 +1,74 @@
+
+
+/* ---------- Bebas Neue (single display font - 400)  */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('/fonts/bebas-neue/BebasNeue-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Manrope (body) ----------
+   Static weights map directly to the existing --fw-* scale. */
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope/Manrope-ExtraLight.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+ 
+ 
+
+
+
+

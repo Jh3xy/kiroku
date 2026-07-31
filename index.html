@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiroku - Anime Search on Demand</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="/src/js/script.js"></script>
+  </head>
+  <body>
+    <div id="app">
+
+      <!-- ===== NAV ===== -->
+      <header class="nav">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-text">
+            <h1>KIROKU</h1>
+            <span>記録 · anime search</span>
+          </div>
+        </div>
+
+        <div class="nav-end">
+          <nav class="pill-toggle" aria-label="View">
+            <button type="button" class="pill-btn is-active" data-view="browse">Browse</button>
+            <button type="button" class="pill-btn" data-view="favorites">
+              Favorites <span class="fav-count" id="fav-count">0</span>
+            </button>
+          </nav>
+
+          <!-- ===== USER MENU — avatar src + dropdown contents to be filled in later ===== -->
+          <div class="user-menu" id="user-menu">
+            <button
+              type="button"
+              class="user-menu-trigger"
+              id="user-menu-trigger"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="user-menu-dropdown"
+            >
+              <img class="user-avatar" src="/my-pfp.jpg" id="user-avatar" alt="Your avatar" />
+              <svg class="user-chevron" viewBox="0 0 12 8" fill="none" aria-hidden="true">
+                <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+
+            <div class="user-menu-dropdown" id="user-menu-dropdown" hidden>
+              <button type="button" class="user-menu-item" data-action="toggle-theme">Toggle theme</button>
+              <button type="button" class="user-menu-item" data-action="account-details">Account details</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ===== SEARCH ===== -->
+      <section class="search-bar">
+        <form id="search-form" role="search">
+          <input
+            id="search-input"
+            class="search-input"
+            type="text"
+            name="q"
+            placeholder="Search anime titles…"
+            autocomplete="off"
+          />
+        </form>
+      </section>
+
+      <!-- ===== FEATURED / HERO — JS replaces #hero innerHTML with rendered hero-template ===== -->
+      <section class="hero" id="hero" aria-live="polite">
+        <div class="hero-art skel skel-art"></div>
+        <div class="hero-body">
+          <div class="skel skel-line" style="width:70%; height:22px;"></div>
+          <div class="skel skel-line" style="width:40%; height:11px; margin-bottom:16px;"></div>
+          <div class="skel skel-line" style="width:90%; margin-bottom:6px;"></div>
+          <div class="skel skel-line" style="width:80%;"></div>
+          <div class="skel skel-line" style="width:60%;"></div>
+        </div>
+      </section>
+
+      <!-- ===== BROWSE GRID — JS replaces #grid innerHTML with rendered card-template x N ===== -->
+      <section class="browse">
+        <div class="browse-header">
+          <h2 id="browse-title">Browse</h2>
+          <span class="browse-count" id="browse-count"></span>
+        </div>
+
+        <div class="grid" id="grid" aria-live="polite">
+          <!-- Skeleton placeholders shown on first paint, before the first fetch resolves.  -->
+          <div class="card card-skeleton" aria-hidden="true"></div>
+          <div class="card card-skeleton" aria-hidden="true"></div>
+          <div class="card card-skeleton" aria-hidden="true"></div>
+          <div class="card card-skeleton" aria-hidden="true"></div>
+          <div class="card card-skeleton" aria-hidden="true"></div>
+          <div class="card card-skeleton" aria-hidden="true"></div>
+        </div>
+
+        <p class="empty-state" id="empty-state" hidden>No titles found. Try another search.</p>
+      </section>
+    </div>
+
+    <!-- ===== TEMPLATES — cloned + populated by script.js once real data arrives ===== -->
+    <template id="card-template">
+      <div class="card" tabindex="0">
+        <div class="card-art">
+          <span class="card-score"><span class="score-icon">★</span><span data-field="score"></span></span>
+          <div class="card-overlay">
+            <div class="card-genre" data-field="genre"></div>
+            <div class="card-title" data-field="title"></div>
+            <button type="button" class="card-play" data-action="play" aria-label="Play trailer">
+              <i data-lucide="play"></i> Play
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="hero-template">
+      <div class="hero-art"></div>
+      <div class="hero-body">
+        <h2 class="hero-title" data-field="title"></h2>
+        <div class="hero-meta" data-field="meta"></div>
+        <p class="hero-desc" data-field="description"></p>
+        <div class="hero-actions">
+          <div class="hero-actions__primary">
+            <button type="button" class="play-btn" data-action="save">
+              <span class="save-icon">
+                <i data-lucide="play"></i>
+              </span> Play
+            </button>
+            <button type="button" class="save-btn" data-action="save">
+              <span class="save-icon">
+                <i data-lucide="bookmark"></i>
+              </span> Save
+            </button>
+          </div>
+          <div class="score-badge"><span data-field="score"></span></div>
+        </div>
+      </div>
+    </template>
+  </body>
+  <script>
+    lucide.createIcons();
+  </script>
+</html>

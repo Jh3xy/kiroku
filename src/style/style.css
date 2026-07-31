@@ -1,0 +1,709 @@
+/* ====================  KIROKU — STYLE  ====================
+   Depends on variables.css (tokens) and font.css (@font-face) being
+   loaded first — this file only consumes var(--token), never declares
+   raw colors/sizes.
+   Breakpoints implement the two already documented in variables.css:
+     --bp-nav-wrap: 640px   → nav unwraps from mobile stack to a single row
+     --bp-hero-stack: 760px → hero goes from stacked to two-column
+============================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+button, .card  {transition: var(--transition-fast);}
+.card:active,
+button:active {
+  transform: scale(.98);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  font-family: var(--ff-secondary);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==================== NAV ==================== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--nav-bg);
+  backdrop-filter: blur(8px);
+  border-bottom: var(--border-width-sm) solid var(--color-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.brand-mark {
+  width: var(--size-brand-mark);
+  height: var(--size-brand-mark);
+  border-radius: 50%;
+  background: conic-gradient(var(--color-persimmon), var(--color-gold), var(--color-persimmon));
+  flex-shrink: 0;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-family: var(--ff-primary);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-xl);
+  letter-spacing: var(--spacing-wider);
+  color: var(--color-text-strong);
+  line-height: 1;
+}
+
+.brand-text span {
+  display: block;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--spacing-widest);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.nav-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  border: none;
+  padding: var(--space-1);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.user-menu-trigger:hover {
+  background: var(--color-surface-hover);
+}
+
+.user-avatar {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-surface-hover);
+  border: var(--border-width-sm) solid var(--color-border);
+  object-fit: cover;
+}
+
+.user-chevron {
+  width: var(--size-nav-icon);
+  height: var(--size-nav-icon);
+  color: var(--color-text-dim);
+  transition: transform var(--transition-fast);
+}
+
+.user-menu-trigger[aria-expanded="true"] .user-chevron {
+  transform: rotate(180deg);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--color-surface);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card-hover);
+  padding: var(--space-2);
+  z-index: var(--z-tool-ui);
+}
+
+.user-menu-dropdown[hidden] {
+  display: none;
+}
+
+.user-menu-item {
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--color-text-body);
+  font-family: var(--ff-secondary);
+  font-size: var(--fs-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.user-menu-item:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-strong);
+}
+
+.pill-toggle {
+  display: flex;
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  border: var(--border-width-sm) solid var(--color-border);
+}
+
+.pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ff-secondary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.pill-btn:hover {
+  color: var(--color-text-body);
+}
+
+.pill-btn.is-active {
+  background: var(--color-persimmon);
+  color: var(--color-text-strong);
+}
+
+.fav-count {
+  background: var(--color-gold);
+  color: #1a1408;
+  font-size: 9px;
+  font-weight: var(--fw-bold);
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+/* ==================== SEARCH ==================== */
+.search-bar {
+  padding: var(--space-4);
+}
+
+.search-input {
+  width: 100%;
+  background: var(--color-surface);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-body);
+  font-family: var(--ff-secondary);
+  font-size: var(--fs-md);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-persimmon);
+}
+
+/* ==================== HERO ==================== */
+.hero {
+  margin: 0 var(--space-4) var(--space-8);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card-idle);
+}
+
+/* Author rules for .hero (including the display:grid one at 760px below)
+   would otherwise beat the UA [hidden] stylesheet — pin it down explicitly. */
+.hero[hidden] {
+  display: none;
+}
+
+.hero-art {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--hero-glow), var(--color-surface);
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-body {
+  padding: var(--space-5);
+}
+
+.hero-title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--ff-primary);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-display-sm);
+  letter-spacing: var(--spacing-tight);
+  color: var(--color-text-strong);
+  line-height: var(--lh-tight);
+}
+
+.hero-meta {
+  font-size: var(--fs-xs);
+  color: var(--color-text-dim);
+  letter-spacing: var(--spacing-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+}
+
+.hero-desc {
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-base);
+  color: var(--color-text-body);
+  line-height: var(--lh-relaxed);
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.hero-actions__primary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.score-badge {
+  width: var(--size-score-badge);
+  height: var(--size-score-badge);
+  border-radius: 50%;
+  background: var(--color-surface-hover);
+  border: var(--border-width-md) solid var(--color-gold);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.score-badge span {
+  font-family: var(--ff-primary);
+  font-size: var(--fs-lg);
+  color: var(--color-gold);
+}
+
+/* Primary CTA — persimmon is reserved for primary action/CTA per your tokens */
+.play-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-persimmon);
+  color: var(--color-text-strong);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--ff-secondary);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
+  letter-spacing: var(--spacing-wide);
+  cursor: pointer;
+  transition: filter var(--transition-fast);
+}
+
+.play-btn:hover {
+  filter: brightness(1.1);
+}
+
+.play-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Secondary action — outlined, gold. Gold is reserved for score badges and
+   favorite/star per your tokens, so Save borrows that instead of persimmon
+   to stay out of the primary CTA's way visually. */
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--color-gold);
+  border: var(--border-width-sm) solid var(--color-gold);
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--ff-secondary);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--spacing-wide);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.save-btn:hover {
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.save-btn.is-saved {
+  background: var(--color-gold);
+  color: #1a1408;
+}
+
+.save-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==================== BROWSE ==================== */
+.browse {
+  padding: 0 var(--space-4) var(--space-12);
+}
+
+.browse-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.browse-header h2 {
+  margin: 0;
+  font-family: var(--ff-primary);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-2xl);
+  letter-spacing: var(--spacing-tight);
+  color: var(--color-text-strong);
+}
+
+.browse-count {
+  font-size: var(--fs-xs);
+  color: var(--color-text-dim);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--color-text-dim);
+  font-size: var(--fs-md);
+  padding: var(--space-12) 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card-idle);
+  transition: box-shadow var(--transition-card), transform var(--transition-card);
+  cursor: pointer;
+}
+
+.card:hover,
+.card:focus-visible {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  outline: var(--border-width-md) solid var(--color-persimmon);
+  outline-offset: 2px;
+}
+
+.card-art {
+  position: relative;
+  aspect-ratio: var(--aspect-poster);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-surface-hover);
+}
+
+.card-play {
+  z-index: var(--z-card-fx);
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-persimmon);
+  color: var(--color-text-strong);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 30px;
+  margin-top: 4px;
+  font-family: var(--ff-secondary);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--spacing-wide);
+  cursor: pointer;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.card-play:hover {
+  filter: brightness(1.1);
+}
+
+.card-play svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Hover-reveal only on devices that actually support hover (mouse/trackpad) —
+   touch devices keep it visible at all times since there's no hover state to reveal it. */
+@media (hover: hover) and (pointer: fine) {
+  .card-play {
+    display: none;
+    transform: translateY(-4px);
+  }
+
+  .card:hover .card-play,
+  .card:focus-visible .card-play {
+    display: flex;
+    transform: translateY(0);
+  }
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-grad);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-2) var(--space-3);
+}
+
+.card-genre {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--spacing-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-persimmon);
+  font-weight: var(--fw-bold);
+  margin-bottom: 2px;
+}
+
+.card-title {
+  font-family: var(--ff-primary);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-lg);
+  color: var(--color-text-strong);
+  letter-spacing: var(--spacing-tight);
+  line-height: var(--lh-tight);
+}
+
+.card-score {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: var(--z-card-fx);
+  background: rgba(15, 16, 17, 0.85);
+  border: var(--border-width-sm) solid var(--color-gold);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.score-icon {
+  font-size: 8px;
+}
+
+/* ==================== SKELETON ==================== */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skel {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.skel-art {
+  border-radius: var(--radius-md);
+}
+
+.skel-line {
+  height: 10px;
+  border-radius: 4px;
+  margin: var(--space-2) 0;
+}
+
+.hero .skel-art {
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+}
+
+.hero .skel-line {
+  margin: 0 var(--space-5);
+}
+
+.hero .skel-line:first-child {
+  margin-top: var(--space-5);
+}
+
+.card-skeleton {
+  aspect-ratio: var(--aspect-poster);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ====================  RESPONSIVE  ====================
+   Mobile-first base above. From here: unwrap nav, then split hero,
+   then widen the grid as space allows. */
+
+/* --bp-nav-wrap: nav goes to a single row, search stays inline-width */
+@media (min-width: 640px) {
+  .nav {
+    flex-wrap: nowrap;
+    padding-inline: var(--space-6);
+  }
+
+  .search-bar {
+    padding-inline: var(--space-6);
+  }
+
+  .search-input {
+    max-width: 420px;
+  }
+
+  .browse,
+  .hero {
+    margin-inline: var(--space-6);
+  }
+
+  .hero {
+    margin-inline: var(--space-6);
+  }
+}
+
+/* --bp-hero-stack: hero becomes a two-column layout (art left, info right) */
+@media (min-width: 760px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .hero-art {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 320px;
+  }
+
+  .hero-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-8);
+  }
+
+  .hero-desc {
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+  }
+
+  .hero .skel-art {
+    height: auto;
+  }
+}
+
+/* Wider grid as viewport grows — card min-width keeps posters from
+   stretching too wide on large screens */
+@media (min-width: 540px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  #app {
+    padding-inline: var(--space-4);
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .browse,
+  .hero {
+    margin-inline: var(--space-8);
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* Respect reduced-motion preference — shimmer and hover-lift are decorative */
+@media (prefers-reduced-motion: reduce) {
+  .skel,
+  .card-skeleton {
+    animation: none;
+  }
+
+  .card {
+    transition: none;
+  }
+}

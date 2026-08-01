@@ -50,7 +50,14 @@
                 Toggle theme
                 <span class="theme-toggle-circle"></span>
               </button>
-              <button type="button" class="user-menu-item" data-action="account-details">Account details</button>
+              <button type="button" class="user-menu-item" data-action="language">
+                Language
+                <span class="lang-indicator">
+                  <b>EN</b> 
+                  <span class="lang-toggle-circle">
+                  </span>
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -102,6 +109,39 @@
 
         <p class="empty-state" id="empty-state" hidden>No titles found. Try another search.</p>
       </section>
+
+      
+      <!-- ===== FOOTER ===== -->
+      <footer class="footer">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <div class="footer-brand-text">
+              <h2>KIROKU</h2>
+              <span>記録</span>
+            </div>
+          </div>
+          <p class="footer-desc">
+            A personal anime catalog built on the AniList API — search, browse, and save titles in one place.
+          </p>
+        </div>
+ 
+        <div class="footer-links">
+          <a class="footer-link" href="https://github.com/Jh3xy/kiroku" target="_blank" rel="noopener noreferrer">
+            <i data-lucide="github" aria-hidden="true"></i> Source on GitHub
+          </a>
+          <a class="footer-link" href="https://arvystech.com" target="_blank" rel="noopener noreferrer">
+            <i data-lucide="graduation-cap" aria-hidden="true"></i> Built at ARVYS
+          </a>
+          <a class="footer-link" href="https://anilist.co" target="_blank" rel="noopener noreferrer">
+            <i data-lucide="database" aria-hidden="true"></i> Data via AniList
+          </a>
+        </div>
+ 
+        <div class="footer-bottom">
+          <span>© <span id="footer-year"></span> Kiroku. Built as an IT final project.</span>
+        </div>
+      </footer>
     </div>
 
     <!-- ===== MODAL — hidden by default, JS toggles [hidden] and injects a cloned modal-template ===== -->

@@ -185,12 +185,32 @@ body {
   background: var(--color-surface-hover);
   color: var(--color-text-strong);
 }
-
+.user-menu-item[data-action="language"],
 .user-menu-item[data-action="toggle-theme"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+}
+
+
+.lang-toggle-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: transparent;
+  overflow: hidden;
+  background-image: url(/lang.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.lang-indicator{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
 }
 
 .theme-toggle-circle {

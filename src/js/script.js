@@ -134,7 +134,10 @@ function renderFavoritesCarousel(list = getList(FAVORITES_KEY)) {
   }
   renderGrid(favoritesRowTrack, list);
   favoritesRowCount.textContent = `${list.length} title${list.length === 1 ? "" : "s"}`;
-  favoritesRow.hidden = false;
+  
+  if (browseSection.hidden) {
+    favoritesRow.hidden = false;
+  }
   refreshIcons();
 }
 
@@ -168,6 +171,10 @@ async function loadHomepage() {
   try {
     const { media } = await getTrendingAnime(randomPage, 30);
     media.forEach((item) => mediaCache.set(item.id, item));
+
+    // The view can change while this is in flight — 
+    // so don't pull Trending back into view over whatever replaced it.
+    if (!browseSection.hidden) return;
 
     if (!media.length) {
       hero.hidden = true;
@@ -521,4 +528,3 @@ modalOverlay.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !modalOverlay.hidden) closeModal();
 });
-

@@ -90,6 +90,15 @@
         </div>
       </section>
 
+      <!-- ===== FAVORITES ROW — hidden entirely when there are no saved titles; hidden during search/Favorites-tab too, loadBrowse() re-shows it ===== -->
+      <section class="favorites-row" id="favorites-row" hidden>
+        <div class="favorites-row-header">
+          <h2>My List</h2>
+          <span class="favorites-row-count" id="favorites-row-count"></span>
+        </div>
+        <div class="favorites-row-track" id="favorites-row-track"></div>
+      </section>
+
       <!-- ===== BROWSE GRID — JS replaces #grid innerHTML with rendered card-template x N ===== -->
       <section class="browse">
         <div class="browse-header">
@@ -110,7 +119,6 @@
         <p class="empty-state" id="empty-state" hidden>No titles found. Try another search.</p>
       </section>
 
-      
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div class="footer-top">
@@ -125,7 +133,7 @@
             A personal anime catalog built on the AniList API — search, browse, and save titles in one place.
           </p>
         </div>
- 
+
         <div class="footer-links">
           <a class="footer-link" href="https://github.com/Jh3xy/kiroku" target="_blank" rel="noopener noreferrer">
             <i data-lucide="github" aria-hidden="true"></i> Source on GitHub
@@ -137,7 +145,7 @@
             <i data-lucide="database" aria-hidden="true"></i> Data via AniList
           </a>
         </div>
- 
+
         <div class="footer-bottom">
           <span>© <span id="footer-year"></span> Kiroku. Built as an IT final project.</span>
         </div>
@@ -195,7 +203,13 @@
               </span> Save
             </button>
           </div>
-          <div class="score-badge"><span data-field="score"></span></div>
+          <div class="score-stat">
+            <span class="score-stat-icon" aria-hidden="true">
+              <i data-lucide="star"></i>
+            </span>
+            <span class="score-stat-value" data-field="score"></span>
+            <span class="score-stat-max">/10</span>
+          </div>
         </div>
       </div>
     </template>
@@ -222,8 +236,12 @@
             <button type="button" class="save-btn" data-action="save">
               <span class="save-icon"><i data-lucide="bookmark"></i></span> Save
             </button>
-            <div class="score-badge modal-score" data-section="score">
-              <span data-field="score"></span>
+            <div class="score-stat" data-section="score">
+              <span class="score-stat-icon" aria-hidden="true">
+                <i data-lucide="star"></i>
+              </span>
+              <span class="score-stat-value" data-field="score"></span>
+              <span class="score-stat-max">/10</span>
             </div>
           </div>
  

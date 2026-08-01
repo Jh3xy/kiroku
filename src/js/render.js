@@ -1,4 +1,3 @@
-
 /**
  * KIROKU — DOM RENDER MODULE 
  * Turns raw AniList media objects into DOM nodes via the <template>s in index.html. No fetch logic here
@@ -69,6 +68,7 @@ export function renderHero(container, media) {
     `${media.format} · ${formatEpisodes(media.episodes)} · ${media.genres.join(", ")}`;
   node.querySelector('[data-field="description"]').textContent = cleanDescription(media.description);
   node.querySelector('[data-field="score"]').textContent = formatScore(media.averageScore);
+  node.querySelector(".score-stat").hidden = media.averageScore == null;
 
   container.innerHTML = "";
   container.appendChild(node);

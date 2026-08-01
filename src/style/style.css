@@ -1,11 +1,6 @@
-/* ====================  KIROKU — STYLE  ====================
-   Depends on variables.css (tokens) and font.css (@font-face) being
-   loaded first — this file only consumes var(--token), never declares
-   raw colors/sizes.
-   Breakpoints implement the two already documented in variables.css:
-     --bp-nav-wrap: 640px   → nav unwraps from mobile stack to a single row
-     --bp-hero-stack: 760px → hero becomes a full-bleed backdrop, art behind text
-============================================================= */
+
+
+/* ====================  KIROKU — STYLE  ========== */
 
 *,
 *::before,
@@ -408,35 +403,32 @@ body {
   color: var(--color-gold);
 }
 
-/* Hero-only score stat — a circle answers "what is this number" poorly.
-   A labelled ★ value / 10 reads instantly. Modal keeps .score-badge for
-   now (more room to breathe there); revisit if it should match. */
+/* Hero-only score stat */
 .score-stat {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   background: var(--color-surface-hover);
-  border: var(--border-width-sm) solid var(--color-gold);
   flex-shrink: 0;
-}
-
-.score-stat[hidden] {
-  display: none;
-}
+} 
 
 .score-stat-icon {
-  font-size: var(--fs-lg);
-  color: var(--color-gold);
+  /* font-size: var(--fs-lg); */
+  color: var(--color-text-dim);
   line-height: 1;
+}
+
+.score-stat-icon svg {
+  width: var(--fs-xs);
+  height: var(--fs-xs);
 }
 
 .score-stat-value {
   font-family: var(--ff-primary);
   font-weight: var(--fw-regular);
-  font-size: var(--fs-xl);
-  color: var(--color-gold);
+  font-size: var(--fs-md);
   line-height: 1;
 }
 
@@ -539,6 +531,52 @@ body {
   color: var(--color-text-dim);
   font-size: var(--fs-md);
   padding: var(--space-12) 0;
+}
+
+/* ==================== FAVORITES ROW ====================
+   Reuses .card/.card-art/.card-overlay etc. as-is — same buildCard()
+   output as the grid, just laid out in a scrollable flex row instead of
+   a CSS grid. Manual scroll only (overflow-x + scroll-snap), no autoplay. */
+.favorites-row {
+  margin: 0 var(--space-4) var(--space-8);
+}
+
+.favorites-row[hidden] {
+  display: none;
+}
+
+.favorites-row-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.favorites-row-header h2 {
+  margin: 0;
+  font-family: var(--ff-primary);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-xl);
+  letter-spacing: var(--spacing-tight);
+  color: var(--color-text-strong);
+}
+
+.favorites-row-count {
+  font-size: var(--fs-xs);
+  color: var(--color-text-dim);
+}
+
+.favorites-row-track {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-2);
+}
+
+.favorites-row-track .card {
+  flex: 0 0 140px;
+  scroll-snap-align: start;
 }
 
 .grid {
@@ -1000,7 +1038,11 @@ body {
   flex-shrink: 0;
 }
 
-/* ==================== FOOTER ============== */
+/* ==================== FOOTER ====================
+   Secondary to the hero, not competing with it — quiet chrome that closes
+   out the page. Border-top pairs with .nav's border-bottom to bookend
+   #app. The ::before glow reuses --hero-glow rather than inventing a new
+   effect, so it reads as the same design language, just dialed way down. */
 .footer {
   position: relative;
   overflow: hidden;
@@ -1149,6 +1191,14 @@ body {
     margin-inline: var(--space-6);
   }
 
+  .favorites-row {
+    margin-inline: var(--space-6);
+  }
+
+  .favorites-row-track .card {
+    flex-basis: 160px;
+  }
+
   .footer {
     padding-inline: var(--space-6);
   }
@@ -1169,7 +1219,7 @@ body {
     position: relative;
     display: flex;
     align-items: flex-end;
-    min-height: 480px;
+    min-height: 410px;
   }
 
   .hero-art {
@@ -1226,12 +1276,24 @@ body {
     margin-inline: var(--space-8);
   }
 
+  .favorites-row {
+    margin-inline: var(--space-8);
+  }
+
+  .favorites-row-track .card {
+    flex-basis: 180px;
+  }
+
   .footer {
     padding-inline: var(--space-8);
   }
 }
 
 @media (min-width: 1100px) {
+  .favorites-row-track .card {
+    flex-basis: 200px;
+  }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
@@ -1248,3 +1310,4 @@ body {
     transition: none;
   }
 }
+

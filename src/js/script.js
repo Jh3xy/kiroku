@@ -1,14 +1,28 @@
 
+
+
 // Stylesheets
 import "../style/font.css";
 import "../style/variables.css";
 import "../style/style.css";
 
 import { getTrendingAnime, searchAnime, getAnimeDetails } from "./api.js";
-import { renderHero, renderGrid, renderModalShell, renderModalDetails, renderModalErrorState } from "./render.js";
+import {
+  renderHero,
+  renderGrid,
+  renderModalShell,
+  renderModalDetails,
+  renderModalErrorState,
+} from "./render.js";
 import { pickRandom } from "./utils.js";
+import { getList, hasItem, toggleItem } from "./storage.js";
+
+const FAVORITES_KEY = "favorites";
 
 console.log("[script]: loaded");
+
+const footerYear = document.getElementById("footer-year");
+if (footerYear) footerYear.textContent = new Date().getFullYear();
 
 const hero = document.getElementById("hero");
 const grid = document.getElementById("grid");
@@ -19,8 +33,15 @@ const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
 const userMenuTrigger = document.getElementById("user-menu-trigger");
 const userMenuDropdown = document.getElementById("user-menu-dropdown");
-const themeToggleButton = document.querySelector('[data-action="toggle-theme"]');
+const themeToggleButton = document.querySelector(
+  '[data-action="toggle-theme"]',
+);
 const modalOverlay = document.getElementById("modal-overlay");
+const pillToggle = document.querySelector(".pill-toggle");
+const favCountEl = document.getElementById("fav-count");
+const favoritesRow = document.getElementById("favorites-row");
+const favoritesRowTrack = document.getElementById("favorites-row-track");
+const favoritesRowCount = document.getElementById("favorites-row-count");
 
 // In-memory cache of every media object seen in browse/search — lets a
 // click paint the modal's identity fields (title/native/meta/score)
@@ -44,13 +65,104 @@ if (savedTheme === "dark" || savedTheme === "light") {
   document.documentElement.dataset.theme = savedTheme;
 }
 
+// "browse" (trending/search results) or "favorites" (the pill-toggle's
+// full saved-titles view) — separate from the favorites-row carousel,
+// which is a homepage shortcut and stays hidden while this is "favorites".
+let currentView = "browse";
+
+function setActivePill(view) {
+  document.querySelectorAll(".pill-btn").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.view === view);
+  });
+}
+
+/** Sync every currently-rendered Save button for `id` — hero's and/or the modal's. */
+function updateSaveButtons(id, isSaved) {
+  if (Number(hero.dataset.id) === id) {
+    hero
+      .querySelector('[data-action="save"]')
+      ?.classList.toggle("is-saved", isSaved);
+  }
+  const modalEl = modalOverlay.querySelector(".modal");
+  if (Number(modalEl?.dataset.id) === id) {
+    modalEl
+      .querySelector('[data-action="save"]')
+      ?.classList.toggle("is-saved", isSaved);
+  }
+}
+
+function updateFavCount(count = getList(FAVORITES_KEY).length) {
+  favCountEl.textContent = count;
+}
+
+/** Refill the "My List" carousel, or hide the whole row if it's empty. */
+function renderFavoritesCarousel(list = getList(FAVORITES_KEY)) {
+  if (!list.length) {
+    favoritesRow.hidden = true;
+    favoritesRowTrack.innerHTML = "";
+    return;
+  }
+  renderGrid(favoritesRowTrack, list);
+  favoritesRowCount.textContent = `${list.length} title${list.length === 1 ? "" : "s"}`;
+  favoritesRow.hidden = false;
+  refreshIcons();
+}
+
+/** Full Favorites tab — replaces the main grid, mirrors loadResults' shape. */
+function showFavoritesView() {
+  const list = getList(FAVORITES_KEY);
+  hero.hidden = true;
+  favoritesRow.hidden = true; // avoid showing the same titles twice
+  emptyState.hidden = true;
+  browseTitle.textContent = "Favorites";
+
+  if (!list.length) {
+    grid.innerHTML = "";
+    browseCount.textContent = "0 titles";
+    emptyState.textContent =
+      "No favorites yet — tap Save on a title to add it here.";
+    emptyState.hidden = false;
+    return;
+  }
+
+  renderGrid(grid, list);
+  browseCount.textContent = `${list.length} title${list.length === 1 ? "" : "s"}`;
+  refreshIcons();
+}
+
+function switchView(view) {
+  if (view === currentView) return;
+  currentView = view;
+  setActivePill(view);
+  searchController?.abort();
+  searchInput.value = "";
+  if (view === "favorites") {
+    showFavoritesView();
+  } else {
+    loadBrowse();
+  }
+}
+
+/** Toggle `media`'s saved state everywhere it might currently be visible. */
+function toggleFavorite(media) {
+  const list = toggleItem(FAVORITES_KEY, media);
+  const isSaved = list.some((item) => item.id === media.id);
+  updateSaveButtons(media.id, isSaved);
+  updateFavCount(list.length);
+  if (currentView === "favorites") {
+    showFavoritesView();
+  } else {
+    renderFavoritesCarousel(list);
+  }
+}
+
 /** Convert Lucide icons — re-run after any DOM injection. */
 function refreshIcons() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-/** Reset hero/grid back to skeleton placeholders — 
- * UX feedback while a fetch is in flight. 
+/** Reset hero/grid back to skeleton placeholders —
+ * UX feedback while a fetch is in flight.
  * */
 function showLoadingState({ showHero, label }) {
   emptyState.hidden = true;
@@ -58,7 +170,10 @@ function showLoadingState({ showHero, label }) {
   browseCount.textContent = "";
   // Inject Card skeleton loaders
   grid.innerHTML = gridSkeletonMarkup;
- 
+  // Hidden by default here — loadBrowse() re-shows it if there are
+  // favorites; search results and the Favorites tab keep it hidden.
+  favoritesRow.hidden = true;
+
   if (showHero) {
     hero.hidden = false;
     hero.innerHTML = heroSkeletonMarkup;
@@ -94,6 +209,9 @@ async function loadResults(fetcher, { label, showHero }) {
       const featured = pickRandom(media);
       renderHero(hero, featured);
       hero.hidden = false;
+      hero
+        .querySelector('[data-action="save"]')
+        ?.classList.toggle("is-saved", hasItem(FAVORITES_KEY, featured.id));
       const rest = media.filter((item) => item.id !== featured.id);
       renderGrid(grid, rest.length ? rest : media);
     } else {
@@ -121,13 +239,20 @@ async function loadResults(fetcher, { label, showHero }) {
 function loadBrowse() {
   searchController?.abort();
   showLoadingState({ showHero: true, label: "Browse" });
-  loadResults(() => getTrendingAnime(1, 30), {
+  renderFavoritesCarousel();
+  // Random page each load instead of always page 1 — otherwise every visit
+  // shows the identical top-30 trending set. Capped at 12 (≈360th trending
+  // entry at perPage 30) so results stay recognizably "trending" rather
+  // than drifting into obscure long-tail titles.
+  const randomPage = Math.floor(Math.random() * 12) + 1;
+  loadResults(() => getTrendingAnime(randomPage, 30), {
     label: "Browse",
     showHero: true,
   });
 }
 
 // Initial load — populate the skeletons with trending anime.
+updateFavCount();
 loadBrowse();
 
 // Search Functionality
@@ -141,26 +266,41 @@ searchInput.addEventListener("input", () => {
   const query = searchInput.value.trim();
   // clear any older timers
   clearTimeout(debounceTimer);
- 
+
+  // Typing implies wanting search results — bail out of the Favorites tab
+  // without the full switchView() flow (that would clear the input we're
+  // mid-typing into).
+  if (currentView !== "browse") {
+    currentView = "browse";
+    setActivePill("browse");
+  }
+
   if (!query) {
     loadBrowse();
     return;
   }
- 
+
   showLoadingState({ showHero: false, label: `Results for "${query}"` });
- 
+
   debounceTimer = setTimeout(() => {
     searchController?.abort();
     searchController = new AbortController();
- 
-    loadResults(
-      () => searchAnime(query, 1, 20, searchController.signal),
-      { label: `Results for "${query}"`, showHero: false },
-    );
+
+    loadResults(() => searchAnime(query, 1, 20, searchController.signal), {
+      label: `Results for "${query}"`,
+      showHero: false,
+    });
   }, SEARCH_DEBOUNCE_MS);
 });
 
-// User menu dropdown 
+// Browse / Favorites pill toggle
+pillToggle.addEventListener("click", (event) => {
+  const btn = event.target.closest(".pill-btn");
+  if (!btn) return;
+  switchView(btn.dataset.view);
+});
+
+// User menu dropdown
 userMenuTrigger.addEventListener("click", () => {
   const isOpen = userMenuTrigger.getAttribute("aria-expanded") === "true";
   userMenuTrigger.setAttribute("aria-expanded", String(!isOpen));
@@ -211,10 +351,21 @@ async function openModal(id) {
   }
   refreshIcons();
   modalOverlay.querySelector(".modal")?.focus();
+  modalOverlay
+    .querySelector('[data-action="save"]')
+    ?.classList.toggle("is-saved", hasItem(FAVORITES_KEY, id));
 
   try {
     const details = await getAnimeDetails(id, signal);
-    if (!cached) renderModalShell(modalOverlay, details);
+    if (!cached) {
+      renderModalShell(modalOverlay, details);
+      // Give favoriting something to store — cache misses only happen for
+      // titles the grid/hero never rendered (e.g. a future deep link).
+      mediaCache.set(id, details);
+      modalOverlay
+        .querySelector('[data-action="save"]')
+        ?.classList.toggle("is-saved", hasItem(FAVORITES_KEY, id));
+    }
     renderModalDetails(modalOverlay, details);
     refreshIcons();
   } catch (err) {
@@ -225,33 +376,55 @@ async function openModal(id) {
 }
 
 // Grid cards — the whole card opens the modal, including the Play button
-// inside it (a click on Play bubbles up to this same handler).
-grid.addEventListener("click", (event) => {
-  const card = event.target.closest(".card");
-  if (!card?.dataset.id) return;
-  openModal(Number(card.dataset.id));
-});
+// inside it (a click on Play bubbles up to this same handler). Shared
+// between the main grid and the favorites carousel — same card markup,
+// same behavior.
+function bindCardActivation(container) {
+  container.addEventListener("click", (event) => {
+    const card = event.target.closest(".card");
+    if (!card?.dataset.id) return;
+    openModal(Number(card.dataset.id));
+  });
 
-grid.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  const card = event.target.closest(".card");
-  if (!card?.dataset.id) return;
-  event.preventDefault();
-  openModal(Number(card.dataset.id));
-});
+  container.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const card = event.target.closest(".card");
+    if (!card?.dataset.id) return;
+    event.preventDefault();
+    openModal(Number(card.dataset.id));
+  });
+}
+
+bindCardActivation(grid);
+bindCardActivation(favoritesRowTrack);
 
 // Hero — whole hero opens the modal too (Play button included, since it's
 // a real <button> its own Enter/Space already fires a click that bubbles
-// here). Save is excluded since that's a separate action, not "view details".
+// here). Save toggles a favorite instead of opening the modal.
 hero.addEventListener("click", (event) => {
-  if (event.target.closest('[data-action="save"]')) return;
+  const saveBtn = event.target.closest('[data-action="save"]');
+  if (saveBtn) {
+    const media = mediaCache.get(Number(hero.dataset.id));
+    if (media) toggleFavorite(media);
+    return;
+  }
   if (!hero.dataset.id) return;
   openModal(Number(hero.dataset.id));
 });
 
 modalOverlay.addEventListener("click", (event) => {
-  if (event.target.closest('[data-action="close-modal"]') || event.target === modalOverlay) {
+  if (
+    event.target.closest('[data-action="close-modal"]') ||
+    event.target === modalOverlay
+  ) {
     closeModal();
+    return;
+  }
+  const saveBtn = event.target.closest('[data-action="save"]');
+  if (saveBtn) {
+    const modalId = Number(modalOverlay.querySelector(".modal")?.dataset.id);
+    const media = mediaCache.get(modalId);
+    if (media) toggleFavorite(media);
   }
 });
 

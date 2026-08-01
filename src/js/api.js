@@ -3,7 +3,7 @@
 // AniList GraphQL API client. No UI logic here — just fetch + shape.
 // Docs: https://docs.anilist.co/guide/introduction
 
-import { SEARCH_QUERY, BROWSE_QUERY } from "./utils.js";
+import { SEARCH_QUERY, BROWSE_QUERY, MODAL_QUERY } from "./utils.js";
 
 const ANILIST_ENDPOINT = 'https://graphql.anilist.co';
 
@@ -12,7 +12,7 @@ const ANILIST_ENDPOINT = 'https://graphql.anilist.co';
  * Shared request helper — both queries hit the same endpoint with the
  * same error handling, no reason to duplicate that logic.
  */
-async function anilistRequest(query, variables, signal) {
+async function anilistRequest(query, variables, signal, dataKey = "Page") {
   const res = await fetch(ANILIST_ENDPOINT, {
     method: "POST",
     headers: {
@@ -39,8 +39,8 @@ async function anilistRequest(query, variables, signal) {
     );
   }
 
-  console.log("AniList request successful:", json.data.Page);
-  return json.data.Page;
+  console.log("AniList request successful:", json.data[dataKey]);
+  return json.data[dataKey];
 
 }
 
@@ -67,6 +67,18 @@ export async function getTrendingAnime(page = 1, perPage = 10) {
   return anilistRequest(BROWSE_QUERY, { page, perPage });
 }
 
+/**
+ * Fetch full detail for a single anime — fired when a card/modal is opened,
+ * never as part of the browse/search grid render. Cancellable via signal
+ * the same way search already is, since a fast second click should abort
+ * the first in-flight request rather than race it.
+ * @param {number} id - AniList media id
+ * @returns {Promise<object>} raw AniList response.data.Media
+ */
+export async function getAnimeDetails(id, signal) {
+  return anilistRequest(MODAL_QUERY, { id }, signal, "Media");
+}
+
 
 
 /**
@@ -76,5 +88,5 @@ export async function getTrendingAnime(page = 1, perPage = 10) {
  */
 window.searchAnime = searchAnime;
 window.getTrendingAnime = getTrendingAnime;
-
+window.getAnimeDetails = getAnimeDetails;
 

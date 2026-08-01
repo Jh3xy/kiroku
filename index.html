@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -46,7 +46,10 @@
             </button>
 
             <div class="user-menu-dropdown" id="user-menu-dropdown" hidden>
-              <button type="button" class="user-menu-item" data-action="toggle-theme">Toggle theme</button>
+              <button type="button" class="user-menu-item" data-action="toggle-theme">
+                Toggle theme
+                <span class="theme-toggle-circle"></span>
+              </button>
               <button type="button" class="user-menu-item" data-action="account-details">Account details</button>
             </div>
           </div>
@@ -56,6 +59,7 @@
       <!-- ===== SEARCH ===== -->
       <section class="search-bar">
         <form id="search-form" role="search">
+          <i data-lucide="search" class="search-icon" aria-hidden="true"></i>
           <input
             id="search-input"
             class="search-input"
@@ -100,6 +104,20 @@
       </section>
     </div>
 
+    <!-- ===== MODAL — hidden by default, JS toggles [hidden] and injects a cloned modal-template ===== -->
+    <div class="modal-overlay" id="modal-overlay" hidden>
+      <div class="modal">
+        <div class="modal-banner skel skel-art"></div>
+        <div class="modal-body">
+          <div class="skel skel-line" style="width:60%; height:24px; margin-bottom:8px;"></div>
+          <div class="skel skel-line" style="width:35%; height:12px; margin-bottom:16px;"></div>
+          <div class="skel skel-line" style="width:90%;"></div>
+          <div class="skel skel-line" style="width:80%;"></div>
+          <div class="skel skel-line" style="width:70%;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== TEMPLATES — cloned + populated by script.js once real data arrives ===== -->
     <template id="card-template">
       <div class="card" tabindex="0">
@@ -118,8 +136,10 @@
 
     <template id="hero-template">
       <div class="hero-art"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
       <div class="hero-body">
         <h2 class="hero-title" data-field="title"></h2>
+        <div class="hero-native" data-field="native"></div>
         <div class="hero-meta" data-field="meta"></div>
         <p class="hero-desc" data-field="description"></p>
         <div class="hero-actions">
@@ -138,6 +158,80 @@
           <div class="score-badge"><span data-field="score"></span></div>
         </div>
       </div>
+    </template>
+
+    <template id="modal-template">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-field" tabindex="-1">
+        <button type="button" class="modal-close" data-action="close-modal" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+ 
+        <div class="modal-banner">
+          <div class="modal-banner-art" data-field="banner"></div>
+          <div class="modal-banner-overlay" aria-hidden="true"></div>
+        </div>
+ 
+        <div class="modal-body">
+          <div class="modal-heading">
+            <h2 class="modal-title" id="modal-title-field" data-field="title"></h2>
+            <div class="modal-native" data-field="native"></div>
+            <div class="modal-meta" data-field="meta"></div>
+          </div>
+ 
+          <div class="modal-actions">
+            <button type="button" class="save-btn" data-action="save">
+              <span class="save-icon"><i data-lucide="bookmark"></i></span> Save
+            </button>
+            <div class="score-badge modal-score" data-section="score">
+              <span data-field="score"></span>
+            </div>
+          </div>
+ 
+          <!-- Only rendered if trailer exists AND site is youtube — no embed at all otherwise -->
+          <section class="modal-section modal-trailer" data-section="trailer" hidden>
+            <h3 class="modal-section-title">Trailer</h3>
+            <div class="modal-trailer-embed" data-field="trailer"></div>
+          </section>
+ 
+          <!-- Always present, but content can be empty — description(asHtml:true) written via innerHTML -->
+          <section class="modal-section" data-section="description">
+            <h3 class="modal-section-title">Synopsis</h3>
+            <div class="modal-description" data-field="description"></div>
+          </section>
+ 
+          <!-- Each row hidden individually — a title can have some facts and not others -->
+          <section class="modal-section modal-facts" data-section="facts">
+            <dl class="modal-fact-list">
+              <div class="modal-fact" data-fact="studio" hidden>
+                <dt>Studio</dt><dd data-field="studio"></dd>
+              </div>
+              <div class="modal-fact" data-fact="season" hidden>
+                <dt>Season</dt><dd data-field="season"></dd>
+              </div>
+              <div class="modal-fact" data-fact="source" hidden>
+                <dt>Source</dt><dd data-field="source"></dd>
+              </div>
+              <div class="modal-fact" data-fact="duration" hidden>
+                <dt>Episode length</dt><dd data-field="duration"></dd>
+              </div>
+            </dl>
+          </section>
+ 
+          <!-- Hidden whole section if externalLinks has no STREAMING-type entries -->
+          <section class="modal-section modal-watch" data-section="watch" hidden>
+            <h3 class="modal-section-title">Where to Watch</h3>
+            <div class="modal-watch-list" data-field="watch-links"></div>
+          </section>
+        </div>
+      </div>
+    </template>
+ 
+    <!-- One clone per streaming service in externalLinks — count varies per title -->
+    <template id="modal-watch-link-template">
+      <a class="watch-pill" data-field="watch-link" target="_blank" rel="noopener noreferrer">
+        <img class="watch-pill-icon" data-field="watch-icon" alt="" />
+        <span data-field="watch-name"></span>
+      </a>
     </template>
   </body>
   <script>

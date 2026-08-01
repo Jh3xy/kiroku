@@ -1,5 +1,4 @@
 
-
 /* ====================  KIROKU  =================== */
 
 :root{
@@ -64,7 +63,7 @@
 
   /* ---------- COMPONENT SIZE TOKENS ---------- */
   --size-brand-mark:   32px;  /* logo dot */
-  --size-score-badge:  52px;  /* circular score/rating badge */
+  --size-score-badge:  60px;  /* circular score/rating badge (hero only) */
   --size-fav-icon-btn: 24px;  /* card favorite toggle */
   --size-nav-icon:     13px;  /* search icon, close icon */
   --aspect-poster:     2 / 3; /* card/poster aspect ratio */
@@ -72,6 +71,7 @@
   /* ---------- BORDERS ---------- */
   --border-width-sm: 1px;
   --border-width-md: 2px; /* focus rings */
+  --border-width-lg: 3px; /* hero score badge ring */
 
   /* ---------- TRANSITIONS ---------- */
   --transition-fast: 120ms ease;
@@ -84,6 +84,7 @@
   --z-card-fx:  2;  /* overlays/badges within a card */
   --z-nav:      50;
   --z-tool-ui:  60;
+  --z-modal:    80; /* backdrop + dialog, above nav dropdown, below scanline */
   --z-scanline: 999;
 
   /* ---------- BREAKPOINTS (reference only — inline in media queries) ----------
@@ -96,6 +97,7 @@
 :root[data-theme="dark"]{
 
   /* ---------- COLOR — surfaces ---------- */
+  --color-theme-toggle:  #FFF6E6;
   --color-bg:            #0f1011;
   --color-surface:       #1a1b1d;
   --color-surface-hover: #242628;
@@ -124,6 +126,7 @@
 :root[data-theme="light"]{
 
   /* ---------- COLOR — surfaces ---------- */
+  --color-theme-toggle:  #0f1011;
   --color-bg:            #FFF6E6;
   --color-surface:       #FFFDF8;
   --color-surface-hover: #F2E6C9;
@@ -148,3 +151,4 @@
   --shadow-card-hover: 0 14px 28px -14px rgba(29,31,33,0.28), 0 0 0 1px var(--color-persimmon);
   --scanline-opacity: 0; /* texture is a dark-mode-only signature; off in light */
 }
+

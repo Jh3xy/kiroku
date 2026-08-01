@@ -3,7 +3,7 @@
 // AniList GraphQL API client. No UI logic here — just fetch + shape.
 // Docs: https://docs.anilist.co/guide/introduction
 
-import { SEARCH_QUERY, BROWSE_QUERY, MODAL_QUERY } from "./utils.js";
+import { SEARCH_QUERY, BROWSE_QUERY, MODAL_QUERY, AIRING_QUERY, TOP_RATED_QUERY, SEASONAL_QUERY } from "./utils.js";
 
 const ANILIST_ENDPOINT = 'https://graphql.anilist.co';
 
@@ -82,6 +82,31 @@ export async function getAnimeDetails(id, signal) {
 
 
 /**
+ * Currently-airing titles ranked by popularity — powers the "Currently
+ * Airing" homepage row.
+ */
+export async function getAiringAnime(page = 1, perPage = 15) {
+  return anilistRequest(AIRING_QUERY, { page, perPage });
+}
+
+/**
+ * All-time top rated by average score — powers the "Top Rated" row.
+ */
+export async function getTopRatedAnime(page = 1, perPage = 15) {
+  return anilistRequest(TOP_RATED_QUERY, { page, perPage });
+}
+
+/**
+ * Popular titles for a given season/year — powers "Popular This Season".
+ * Caller supplies season/seasonYear (see getCurrentSeason() in utils.js)
+ * rather than this function assuming "now", so it stays reusable if a
+ * season browser ever gets built later.
+ */
+export async function getSeasonalAnime(season, seasonYear, page = 1, perPage = 15) {
+  return anilistRequest(SEASONAL_QUERY, { season, seasonYear, page, perPage });
+}
+
+/**
  * Expose to window so you can call these directly for testings
  * window.searchAnime('frieren').then(console.log)
  * window.getTrendingAnime().then(console.log)
@@ -89,4 +114,6 @@ export async function getAnimeDetails(id, signal) {
 window.searchAnime = searchAnime;
 window.getTrendingAnime = getTrendingAnime;
 window.getAnimeDetails = getAnimeDetails;
-
+window.getAiringAnime = getAiringAnime;
+window.getTopRatedAnime = getTopRatedAnime;
+window.getSeasonalAnime = getSeasonalAnime;

@@ -1,8 +1,8 @@
+
 /**
  * KIROKU — DOM RENDER MODULE 
  * Turns raw AniList media objects into DOM nodes via the <template>s in index.html. No fetch logic here
  */
-
 
 import {
   getTitle,
@@ -61,7 +61,11 @@ export function renderHero(container, media) {
 
   container.dataset.id = media.id;
   const art = node.querySelector(".hero-art");
-  art.style.backgroundImage = `url(${media.coverImage.large})`;
+  // bannerImage is AniList's proper landscape asset — coverImage.large is a
+  // portrait poster (2:3) that looks stretched/washed-out once it's forced
+  // into a wide hero box, especially on desktop. Same fallback chain
+  // renderModalDetails() already uses for the modal banner.
+  art.style.backgroundImage = `url(${media.bannerImage || media.coverImage.large})`;
   node.querySelector('[data-field="title"]').textContent = getTitle(media.title);
   node.querySelector('[data-field="native"]').textContent = media.title.native || "";
   node.querySelector('[data-field="meta"]').textContent =
@@ -194,4 +198,6 @@ export function renderModalErrorState(container) {
       </div>
     </div>
   `;
+  if (window.lucide) window.lucide.createIcons();
 }
+

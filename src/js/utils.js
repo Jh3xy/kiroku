@@ -28,6 +28,21 @@ export function pickRandom(list) {
 }
 
 /**
+ * Map "today" to AniList's season enum + year — e.g. Aug 2026 → SUMMER 2026.
+ * December belongs to the *next* year's Winter (AniList's Winter 2026 spans
+ * Dec 2025–Feb 2026), so it's the one case that shifts the year forward.
+ */
+export function getCurrentSeason(date = new Date()) {
+  const month = date.getMonth(); // 0-indexed
+  const year = date.getFullYear();
+  if (month === 11) return { season: "WINTER", seasonYear: year + 1 };
+  if (month <= 1) return { season: "WINTER", seasonYear: year };
+  if (month <= 4) return { season: "SPRING", seasonYear: year };
+  if (month <= 7) return { season: "SUMMER", seasonYear: year };
+  return { season: "FALL", seasonYear: year };
+}
+
+/**
  * Fields only the modal needs — deliberately kept out of SEARCH_QUERY/
  * BROWSE_QUERY so every browse/search request doesn't pay for data most
  * cards never display. Fired once, on demand, when a card is opened.
@@ -147,6 +162,7 @@ query ($search: String, $page: Int, $perPage: Int) {
         large
         color
       }
+      bannerImage
       description(asHtml: false)
       averageScore
       episodes
@@ -186,6 +202,7 @@ query ($page: Int, $perPage: Int) {
         large
         color
       }
+      bannerImage
       description(asHtml: false)
       averageScore
       episodes
@@ -197,6 +214,90 @@ query ($page: Int, $perPage: Int) {
         site
         thumbnail
       }
+    }
+  }
+}
+`;
+
+// Shared field list for the homepage row queries below — same shape as
+// BROWSE_QUERY/SEARCH_QUERY, kept as one fragment so three near-identical
+// queries don't each repeat the field list.
+const HOME_ROW_FIELDS = `
+  id
+  title {
+    romaji
+    english
+    native
+  }
+  coverImage {
+    large
+    color
+  }
+  bannerImage
+  description(asHtml: false)
+  averageScore
+  episodes
+  genres
+  format
+  status
+  trailer {
+    id
+    site
+    thumbnail
+  }
+`;
+
+// Currently-airing titles, ranked by popularity — the status filter is what
+// separates this from BROWSE_QUERY, not the sort.
+export const AIRING_QUERY = `
+query ($page: Int, $perPage: Int) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      currentPage
+      lastPage
+      hasNextPage
+      perPage
+    }
+    media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC) {
+      ${HOME_ROW_FIELDS}
+    }
+  }
+}
+`;
+
+// All-time top rated by AniList's average score.
+export const TOP_RATED_QUERY = `
+query ($page: Int, $perPage: Int) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      currentPage
+      lastPage
+      hasNextPage
+      perPage
+    }
+    media(type: ANIME, sort: SCORE_DESC) {
+      ${HOME_ROW_FIELDS}
+    }
+  }
+}
+`;
+
+// Popular titles airing in a specific season/year — season & seasonYear are
+// computed by getCurrentSeason() above and passed in as variables.
+export const SEASONAL_QUERY = `
+query ($page: Int, $perPage: Int, $season: MediaSeason, $seasonYear: Int) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      currentPage
+      lastPage
+      hasNextPage
+      perPage
+    }
+    media(type: ANIME, season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC) {
+      ${HOME_ROW_FIELDS}
     }
   }
 }

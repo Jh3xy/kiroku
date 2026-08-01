@@ -5,13 +5,7 @@ import "../style/variables.css";
 import "../style/style.css";
 
 import { getTrendingAnime, searchAnime, getAnimeDetails } from "./api.js";
-import {
-  renderHero,
-  renderGrid,
-  renderModalShell,
-  renderModalDetails,
-  renderModalErrorState,
-} from "./render.js";
+import { renderHero, renderGrid, renderModalShell, renderModalDetails, renderModalErrorState } from "./render.js";
 import { pickRandom } from "./utils.js";
 
 console.log("[script]: loaded");
@@ -28,6 +22,12 @@ const userMenuDropdown = document.getElementById("user-menu-dropdown");
 const themeToggleButton = document.querySelector('[data-action="toggle-theme"]');
 const modalOverlay = document.getElementById("modal-overlay");
 
+// In-memory cache of every media object seen in browse/search — lets a
+// click paint the modal's identity fields (title/native/meta/score)
+// instantly instead of waiting on the detail fetch. Description/banner/
+// facts/trailer/watch-links still always come from the fetch below,
+// regardless of cache, since the lean list objects never carry them.
+const mediaCache = new Map();
 
 // Skeleton loader captured before the first fetch — reused for Loading States
 const heroSkeletonMarkup = hero.innerHTML;
@@ -80,7 +80,6 @@ async function loadResults(fetcher, { label, showHero }) {
 
   try {
     const { media } = await fetcher();
-
     media.forEach((item) => mediaCache.set(item.id, item));
 
     if (!media.length) {
@@ -176,11 +175,6 @@ themeToggleButton.addEventListener("click", () => {
   localStorage.setItem("theme", nextTheme);
 });
 
-
-// In-memory cache of every media object seen in browse/search — lets a
-// click paint the modal instantly instead of waiting on a network call.
-const mediaCache = new Map();
-
 document.addEventListener("click", (event) => {
   if (!document.getElementById("user-menu").contains(event.target)) {
     userMenuTrigger.setAttribute("aria-expanded", "false");
@@ -230,6 +224,8 @@ async function openModal(id) {
   }
 }
 
+// Grid cards — the whole card opens the modal, including the Play button
+// inside it (a click on Play bubbles up to this same handler).
 grid.addEventListener("click", (event) => {
   const card = event.target.closest(".card");
   if (!card?.dataset.id) return;
@@ -244,6 +240,15 @@ grid.addEventListener("keydown", (event) => {
   openModal(Number(card.dataset.id));
 });
 
+// Hero — whole hero opens the modal too (Play button included, since it's
+// a real <button> its own Enter/Space already fires a click that bubbles
+// here). Save is excluded since that's a separate action, not "view details".
+hero.addEventListener("click", (event) => {
+  if (event.target.closest('[data-action="save"]')) return;
+  if (!hero.dataset.id) return;
+  openModal(Number(hero.dataset.id));
+});
+
 modalOverlay.addEventListener("click", (event) => {
   if (event.target.closest('[data-action="close-modal"]') || event.target === modalOverlay) {
     closeModal();
@@ -253,4 +258,3 @@ modalOverlay.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !modalOverlay.hidden) closeModal();
 });
-

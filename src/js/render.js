@@ -60,6 +60,7 @@ export function renderGrid(container, mediaList) {
 export function renderHero(container, media) {
   const node = heroTemplate.content.cloneNode(true);
 
+  container.dataset.id = media.id;
   const art = node.querySelector(".hero-art");
   art.style.backgroundImage = `url(${media.coverImage.large})`;
   node.querySelector('[data-field="title"]').textContent = getTitle(media.title);
@@ -126,8 +127,18 @@ export function renderModalDetails(container, media) {
   const trailerSection = container.querySelector('[data-section="trailer"]');
   const trailerUrl = getYoutubeEmbedUrl(media.trailer);
   if (trailerUrl) {
-    container.querySelector('[data-field="trailer"]').innerHTML =
-      `<iframe src="${trailerUrl}" title="Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+    const embed = container.querySelector('[data-field="trailer"]');
+    embed.classList.add("skel");
+    embed.innerHTML = "";
+    const iframe = document.createElement("iframe");
+    iframe.src = trailerUrl;
+    iframe.title = "Trailer";
+    iframe.allow =
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.loading = "lazy";
+    iframe.addEventListener("load", () => embed.classList.remove("skel"), { once: true });
+    embed.appendChild(iframe);
     trailerSection.hidden = false;
   } else {
     trailerSection.hidden = true;

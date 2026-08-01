@@ -12,6 +12,31 @@
 *::after {
   box-sizing: border-box;
 }
+
+html {
+  scrollbar-color: var(--color-copper) var(--color-surface);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-copper);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-persimmon);
+}
+
 button, .card  {transition: var(--transition-fast);}
 .card:active,
 button:active {
@@ -726,7 +751,7 @@ body {
 .modal-banner {
   position: relative;
   flex-shrink: 0;
-  aspect-ratio: 16 / 9;
+  height: 160px;
   background: var(--hero-glow), var(--color-surface);
 }
 
@@ -833,6 +858,16 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--color-surface-hover);
+}
+
+.modal-trailer-embed.skel {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 100%
+  );
+  background-size: 800px 100%;
 }
 
 .modal-trailer-embed iframe {

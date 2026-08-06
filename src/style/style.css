@@ -159,7 +159,6 @@ body {
   background: var(--color-surface);
   border: var(--border-width-sm) solid var(--color-border);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card-hover);
   padding: var(--space-2);
   z-index: var(--z-tool-ui);
 }
@@ -304,7 +303,7 @@ body {
 .search-input:focus {
   outline: none;
   border-color: var(--color-persimmon);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-persimmon) 18%, transparent);
+  /* box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-persimmon) 18%, transparent); */
 }
 
 /* ==================== HERO ==================== */

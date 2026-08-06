@@ -72,6 +72,7 @@ const mediaCache = new Map();
 const heroSkeletonMarkup = hero.innerHTML;
 const gridSkeletonMarkup = grid.innerHTML;
 const modalSkeletonMarkup = modalOverlay.innerHTML;
+const trendingRowSkeletonMarkup = trendingRowTrack.innerHTML;
 
 // Search input debounce and functionality
 const SEARCH_DEBOUNCE_MS = 550;
@@ -161,7 +162,8 @@ async function loadHomepage() {
   searchController?.abort();
   hero.hidden = false;
   hero.innerHTML = heroSkeletonMarkup;
-  trendingRow.hidden = true;
+  trendingRowTrack.innerHTML = trendingRowSkeletonMarkup;
+  trendingRow.hidden = false;
   renderFavoritesCarousel();
 
   // Capped at 12 (≈360th trending entry at perPage 30) so results stay
@@ -178,6 +180,7 @@ async function loadHomepage() {
 
     if (!media.length) {
       hero.hidden = true;
+      trendingRow.hidden = true;
       return;
     }
 
@@ -528,3 +531,4 @@ modalOverlay.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !modalOverlay.hidden) closeModal();
 });
+

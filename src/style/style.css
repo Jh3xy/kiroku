@@ -589,6 +589,8 @@ body {
   grid-auto-columns: 140px;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-1);
+  /* margin-left: var(--space-2);
+  margin-right: var(--space-2); */
 }
 
 .home-row-track--dense .card {

@@ -106,7 +106,8 @@
   /* ---------- COLOR — accents ---------- */
   --color-copper:     #B87533;  /* structural: borders, tag fill, secondary icons */
   --color-persimmon:  #FF6B3D;  /* primary action: CTA, active state, hover glow — brightened vs base for dark-bg legibility */
-  --color-gold:       #D4AF37;  /* reserved: score badges, favorite star only */
+  --color-gold:       #D4AF37;  /* reserved: score badges — always sits on a fixed dark chip bg, do not use for text/borders on a themed surface */
+  --color-gold-outline: #D4AF37;  /* gold as foreground on a themed surface (save-btn outline/text) */
 
   /* ---------- COLOR — text ---------- */
   --color-text-strong: #FFF6E6;  /* headings, high emphasis */
@@ -136,6 +137,7 @@
   --color-copper:     #B87533;
   --color-persimmon:  #E25A2A;  /* base (non-brightened) persimmon */
   --color-gold:       #D4AF37; 
+  --color-gold-outline: #8A6316;  
 
   /* ---------- COLOR — text ---------- */
   --color-text-strong: #1D1F21;
@@ -151,4 +153,5 @@
   --shadow-card-hover: 0 14px 28px -14px rgba(29,31,33,0.28), 0 0 0 1px var(--color-persimmon);
   --scanline-opacity: 0; /* texture is a dark-mode-only signature; off in light */
 }
+
 

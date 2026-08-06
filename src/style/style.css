@@ -241,6 +241,7 @@ body {
   color: var(--color-text-dim);
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
+  text-decoration: none;
 }
 
 .pill-btn:hover {
@@ -614,12 +615,12 @@ body {
 
 .card:hover,
 .card:focus-visible {
-  box-shadow: var(--shadow-card-hover);
+  /* box-shadow: var(--shadow-card-hover); */
   transform: translateY(-2px);
 }
 
 .card:focus-visible {
-  outline: var(--border-width-md) solid var(--color-persimmon);
+  /* outline: var(--border-width-md) solid var(--color-persimmon); */
   outline-offset: 2px;
 }
 

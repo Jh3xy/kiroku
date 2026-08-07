@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kiroku - Manga</title>
+  <script>
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      document.documentElement.dataset.theme = savedTheme;
+    }
+  </script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="module" src="./script.js"></script>
 </head>

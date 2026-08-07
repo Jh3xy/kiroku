@@ -14,9 +14,45 @@
   <script type="module" src="./script.js"></script>
 </head>
 <body>
-  
-</body>
+  <div id="app">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <h1>KIROKU</h1>
+          <span>記録 · manga</span>
+        </div>
+      </div>
+
+      <div class="nav-end">
+        <a class="pill-btn is-active" href="/index.html">Anime</a>
+
+        <div class="user-menu" id="user-menu">
+          <button type="button" class="user-menu-trigger" id="user-menu-trigger"
+            aria-haspopup="true" aria-expanded="false" aria-controls="user-menu-dropdown">
+            <img class="user-avatar" src="/my-pfp.jpg" id="user-avatar" alt="Your avatar" />
+            <i data-lucide="chevron"></i>
+          </button>
+          <div class="user-menu-dropdown" id="user-menu-dropdown" hidden>
+            <button type="button" class="user-menu-item" data-action="toggle-theme">
+              Toggle theme
+              <span class="theme-toggle-circle"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="coming-soon">
+      <div class="coming-soon-mark" aria-hidden="true"></div>
+      <span class="coming-soon-eyebrow">記録 · manga</span>
+      <h2 class="coming-soon-title">Coming Soon</h2>
+      <p class="coming-soon-desc">The manga catalog is still being built. Same search, same save, same feel — just for panels instead of episodes.</p>
+    </main>
+  </div>
+
   <script>
     lucide.createIcons();
   </script>
+</body>
 </html>

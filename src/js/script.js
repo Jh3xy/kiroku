@@ -392,7 +392,7 @@ searchInput.addEventListener("input", () => {
 
 // Browse / Favorites pill toggle
 pillToggle.addEventListener("click", (event) => {
-  const btn = event.target.closest(".pill-btn");
+  const btn = event.target.closest("button.pill-btn[data-view]");
   if (!btn) return;
   switchView(btn.dataset.view);
 });
@@ -530,5 +530,15 @@ modalOverlay.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !modalOverlay.hidden) closeModal();
+});
+
+
+
+window.addEventListener("pageshow", (event) => {
+  const navEntry = performance.getEntriesByType("navigation")[0];
+  const restored = event.persisted || navEntry?.type === "back_forward";
+  if (!restored) return;
+  currentView = "browse";
+  setActivePill("browse");
 });
 
